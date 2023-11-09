@@ -11,10 +11,10 @@ const postLastName = document.getElementById('inputPostApellido')
 const deleteBtn = document.getElementById("btnDelete")
 const deleteId = document.getElementById('inputDelete')
 
-const putBtn = document.getElementById('btnPut')
+const btnPut = document.getElementById('btnPut')
 const inputPutId = document.getElementById('inputPutId')
-const putName = document.getElementById('inputPutNombre')
-const putLastName = document.getElementById('inputPutApellido')
+const inputPutNombre = document.getElementById('inputPutNombre')
+const inputPutApellido = document.getElementById('inputPutApellido')
 const btnSendChanges = document.getElementById('btnSendChanges')
 
 function showData (data){
@@ -104,7 +104,7 @@ function verifyPut (){
     }
 }
 
-putBtn.addEventListener('click', () => {
+btnPut.addEventListener('click', () => {
     let tempURL = API_URL + '/' + inputPutId.value
     fetch(tempURL).then(res => res.json()).then(data => {
         putName.value = data.name
@@ -113,10 +113,10 @@ putBtn.addEventListener('click', () => {
     })
 })
 
-putName.addEventListener('change', verifyPutModal)
-putLastName.addEventListener('change', verifyPutModal)
+inputPutNombre.addEventListener('change', verifyPutModal)
+inputPutApellido.addEventListener('change', verifyPutModal)
 function verifyPutModal (){
-    if(putName.value != "" && putLastName.value != "" ){
+    if(inputPutNombre.value != "" && inputPutApellido.value != "" ){
         btnSendChanges.disabled = false
     }else{
         btnSendChanges.disabled = true
@@ -125,8 +125,8 @@ function verifyPutModal (){
 
 btnSendChanges.addEventListener('click', ()=>{
     let data = {
-        name: putName.value,
-        lastname: putLastName.value
+        name: inputPutNombre.value,
+        lastname: inputPutApellido.value
     }
     fetch(API_URL, {
         method: 'PUT',
@@ -140,5 +140,66 @@ btnSendChanges.addEventListener('click', ()=>{
 
 
 
+function nombresPUT(){
+    let info = {
+        name: inputPutNombre.value,
+        lastname: inputPutApellido.value
+    }
+    console.log(info);
+    return info;
+}
 
- 
+btnPut.disabled = true;
+
+inputPutId.addEventListener("input", function(){
+    if(deshabilitarBoton(inputPutId)){
+        btnPut.disabled = true;
+    } else {
+        btnPut.disabled = false;
+    }
+});
+
+btnPut.addEventListener("click", function(){
+    results.innerHTML = "";
+    fetch(URL + inputPutId.value)
+    .then(response =>{
+        if(!response.ok){
+            btnSendChanges.disabled = true;
+            toggleError();
+        } else {
+            btnSendChanges.disabled = false;
+            return response.json();
+        }
+    })
+    .then(data => {
+        inputPutNombre.value = data.name;
+        inputPutApellido.value = data.lastname;
+    })
+    .catch(error => {
+        console.log(error)
+    })
+    btnSendChanges.addEventListener("click", function(){
+    fetch(URL + inputPutId.value, {
+        method: "PUT",
+        body: JSON.stringify(nombresPUT()),
+        headers: {
+            'Content-type': 'application/json; charset=UTF-8'
+        }
+    })
+    .then(response =>{
+        if(!response.ok){
+            toggleError();
+        } else {
+            showArray();
+            return response.json();
+        }
+    })
+    .then(data => {
+        console.log(data);
+    })
+    .catch(error => {
+        console.log(error);
+    })
+    });
+});
+
