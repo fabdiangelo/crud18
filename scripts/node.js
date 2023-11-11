@@ -98,17 +98,17 @@ deleteBtn.addEventListener("click", function() {
 inputPutId.addEventListener('change', verifyPut)
 function verifyPut (){
     if(inputPutId.value != "" ){
-        putBtn.disabled = false
+        btnPut.disabled = false
     }else{
-        putBtn.disabled = true
+        btnPut.disabled = true
     }
 }
 
 btnPut.addEventListener('click', () => {
     let tempURL = API_URL + '/' + inputPutId.value
     fetch(tempURL).then(res => res.json()).then(data => {
-        putName.value = data.name
-        putLastName.value = data.lastname
+        inputPutNombre.value = data.name
+        inputPutApellido.value = data.lastname
         btnSendChanges.disabled = true
     })
 })
@@ -139,67 +139,4 @@ btnSendChanges.addEventListener('click', ()=>{
     
 
 
-
-function nombresPUT(){
-    let info = {
-        name: inputPutNombre.value,
-        lastname: inputPutApellido.value
-    }
-    console.log(info);
-    return info;
-}
-
-btnPut.disabled = true;
-
-inputPutId.addEventListener("input", function(){
-    if(deshabilitarBoton(inputPutId)){
-        btnPut.disabled = true;
-    } else {
-        btnPut.disabled = false;
-    }
-});
-
-btnPut.addEventListener("click", function(){
-    results.innerHTML = "";
-    fetch(URL + inputPutId.value)
-    .then(response =>{
-        if(!response.ok){
-            btnSendChanges.disabled = true;
-            toggleError();
-        } else {
-            btnSendChanges.disabled = false;
-            return response.json();
-        }
-    })
-    .then(data => {
-        inputPutNombre.value = data.name;
-        inputPutApellido.value = data.lastname;
-    })
-    .catch(error => {
-        console.log(error)
-    })
-    btnSendChanges.addEventListener("click", function(){
-    fetch(URL + inputPutId.value, {
-        method: "PUT",
-        body: JSON.stringify(nombresPUT()),
-        headers: {
-            'Content-type': 'application/json; charset=UTF-8'
-        }
-    })
-    .then(response =>{
-        if(!response.ok){
-            toggleError();
-        } else {
-            showArray();
-            return response.json();
-        }
-    })
-    .then(data => {
-        console.log(data);
-    })
-    .catch(error => {
-        console.log(error);
-    })
-    });
-});
 
